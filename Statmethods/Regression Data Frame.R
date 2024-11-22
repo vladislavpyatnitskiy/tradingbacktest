@@ -8,6 +8,8 @@ reg.df <- function(x, y){ # Multiply Regression values with data frame
   
   r <- rownames(x)[-1] # Row names without intercept value
   
+  y <- y[,r] # Reduce excessive columns
+  
   g <- x[1,] # Intercept Value
   
   x <- as.data.frame(x[-1,]) # Reduce first column
@@ -18,7 +20,7 @@ reg.df <- function(x, y){ # Multiply Regression values with data frame
   
   L <- NULL # Make data frame of observations to group of vectors
   
-  for (n in 1:nrow(y)){ s <- t(as.data.frame(as.data.frame(y[n,])[,-1])) 
+  for (n in 1:nrow(y)){ s <- t(as.data.frame(as.data.frame(y[n,]))) 
   
     L <- c(L, s <- as.data.frame(s[order(row.names(s)), ])) } 
     
@@ -26,7 +28,7 @@ reg.df <- function(x, y){ # Multiply Regression values with data frame
   
   H <- NULL # Create Data Frame of Expected Values from Regression output
   
-  for (m in 1:length(L[[1]])){ d <- data.frame(x, as.data.frame(L[[1]][m]))
+  for (m in 1:length(L[[1]])){ d<-cbind.data.frame(x, as.data.frame(L[[1]][m]))
   
     d$var <- d[,1] * d[,2] # Multiply column values
     
