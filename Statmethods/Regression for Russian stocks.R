@@ -45,9 +45,9 @@ rus.regression <- function(x){
   colnames(p) <- c("Brent", "Copper", "Gas", "Gold", "Sugar", "Cotton",
                    "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice")
   
-  p <- as.timeSeries(p) # Make it time series and display
+  a <- as.timeSeries(p) # Make it time series and display
   
-  p <- cbind(D, p)
+  p <- cbind(D, a)
   
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
@@ -81,7 +81,9 @@ rus.regression <- function(x){
   
   for (n in 1:length(D)){ if (isTRUE(n == 1)){
     
-    r <- sprintf("%s ~ %s",f1,D[1]) } else { r <- sprintf("%s + %s",r,D[n]) } }
+      r <- sprintf("%s ~ %s",f1,D[1]) } else {
+      
+      r <- sprintf("%s + %s",r,D[n]) } }
   
   R <- summary(lm(r, d)) # Display the most optimal regression model
   
@@ -91,7 +93,7 @@ rus.regression <- function(x){
   
   g <- S[1,] # Intercept Value
   
-  v <- as.data.frame(p[nrow(p),])[,-1] # Select last observation
+  v <- as.data.frame(a[nrow(a),]) # Select last observation
   
   S <- as.data.frame(S[-1,]) # Reduce first column
   
