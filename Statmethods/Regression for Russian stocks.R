@@ -1,37 +1,24 @@
-lapply(c("quantmod", "timeSeries", "MuMIn", "rvest"), require,
+lapply(c("quantmod", "timeSeries", "MuMIn", "rvest", "moexer"), require,
        character.only = T) # lib
 
 options(na.action = "na.fail") 
 
-rus.regression <- function(x){
+rus.regression <- function(x){ # Optimal Regression & Fair Price for Rus stocks
   
-  y <- read_html(x) %>% html_nodes('body') %>% html_nodes('p') %>% html_text()
+  D <- as.data.frame(get_candles(x, "2007-01-01", interval='daily')[,c(3,8)])
   
-  d <- unlist(strsplit(as.character(gsub('["\r"]', '',
-                                         strsplit(toString(y),
-                                                  "\\n")[[1]])),"\\,"))
+  D <- D[!duplicated(D),] # Remove duplicates
   
-  D <- data.frame(d[seq(from = 1, to = length(d), by = 6)],
-                  d[seq(from = 5, to = length(d), by = 6)])
+  D <- xts(D[,1], order.by = as.Date(D[,2])) # Move dates to row names
   
-  D <- D[-1,] # Eliminate excessive row
+  D <- D[apply(D, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
-  dates <- D[,1] # Subtract dates from main data frame
+  colnames(D) <- x # Put the tickers in data set
   
-  D <- as.data.frame(as.numeric(D[,-1])) #
+  D <- as.timeSeries(D) # Make it time series
   
-  rownames(D) <- dates # Assign dates as row names
-  
-  D <- as.timeSeries(D) # Make data time series
-  
-  w <- unlist(strsplit(as.character(x), "D1"))[2] # Clean URL for ticker 
-  w <- strsplit(toString(strsplit(toString(as.character(w)),
-                                  "\\/")[[1]][2]), "\\_")[[1]][1]  
-  
-  colnames(D) <- c(w) # Assign Column name
-  
-  y <- c("BZ=F", "HG=F", "NG=F", "GC=F", "SB=F", "CT=F", "KC=F", "CC=F",
-         "HE=F", "ZS=F", "ZR=F")
+  y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
+                 "ZR"), "=F", sep = ""), "RUB=X") # tickers 
   
   p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
   
@@ -43,11 +30,11 @@ rus.regression <- function(x){
   if (isTRUE(grepl("=", y))){ y <- gsub("=", "", y) }
   
   colnames(p) <- c("Brent", "Copper", "Gas", "Gold", "Sugar", "Cotton",
-                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice")
+                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Rouble")
   
   a <- as.timeSeries(p) # Make it time series and display
   
-  p <- cbind(D, a)
+  p <- cbind(D, a) # Join
   
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
@@ -82,9 +69,9 @@ rus.regression <- function(x){
   for (n in 1:length(D)){ if (isTRUE(n == 1)){
     
       r <- sprintf("%s ~ %s",f1,D[1]) } else {
-      
-      r <- sprintf("%s + %s",r,D[n]) } }
-  
+        
+        r <- sprintf("%s + %s",r,D[n]) } }
+    
   R <- summary(lm(r, d)) # Display the most optimal regression model
   
   S <- as.data.frame(R$coefficients[,1]) # Regression coefficients
@@ -115,3 +102,4 @@ rus.regression <- function(x){
   
   list(R, sprintf("The fair price is %s", round(sum(l[,3]) + g, 2)))
 }
+rus.regression("BISVP")
