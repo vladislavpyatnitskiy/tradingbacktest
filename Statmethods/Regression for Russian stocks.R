@@ -99,7 +99,18 @@ rus.regression <- function(x){ # Optimal Regression & Fair Price for Rus stocks
   l <- data.frame(S, v) # Join 
   
   l$var <- l[,1] * l[,2] # Sum Product of two columns
+
+  pot_return = round(log(round(sum(l[,3]) + g, 2) / p[nrow(p), 1]), 4) * 100
+                         
+  advice <- ifelse(pot_return > 0, "Upside", "Downside") # Advice
   
-  list(R, sprintf("The fair price is %s", round(sum(l[,3]) + g, 2)))
+  list(
+    R,
+    c(
+      sprintf("Fair price is %s", round(sum(l[,3]) + g, 2)),
+      sprintf("Current Price %s", p[nrow(p), 1]),
+      sprintf("Potential %s: %s %%", advice, pot_return)
+         )
+       )
 }
 rus.regression("BISVP")
