@@ -16,7 +16,11 @@ rus.regression <- function(x){ # Optimal Regression & Fair Price for Rus stocks
   colnames(D) <- x # Put the tickers in data set
   
   D <- as.timeSeries(D) # Make it time series
+
+  if (x == "BELU"){ f <- which(rownames(D) == "2024-08-15")
   
+      D[c(1:f),] <- D[c(1:f),]/8 }
+               
   y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
                  "ZR"), "=F", sep = ""), "RUB=X") # tickers 
   
