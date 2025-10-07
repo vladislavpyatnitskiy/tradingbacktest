@@ -7,8 +7,8 @@ Welcome to the repository! Here you can find R scripts for statistical arbitrage
 
 Find factors that have the impact on financial instruments and find profitable opportunities.
 ```
-[[1]]
-[[1]]$BISVP
+$Regression
+$Regression$BISVP
 
 Call:
 lm(formula = r, data = d)
@@ -38,7 +38,7 @@ Multiple R-squared:  0.8375,	Adjusted R-squared:  0.8367
 F-statistic:  1077 on 10 and 2089 DF,  p-value: < 2.2e-16
 
 
-[[1]]$LKOH
+$Regression$LKOH
 
 Call:
 lm(formula = r, data = d)
@@ -70,7 +70,7 @@ F-statistic:  2485 on 11 and 3756 DF,  p-value: < 2.2e-16
 
 
 
-[[2]]
+$`Data Frame`
       Fair Price Current Price Change %
 BISVP       9.76          9.07     7.33
 LKOH     7255.18       6026.50    18.55
