@@ -3,24 +3,30 @@ lapply(c("quantmod", "timeSeries", "MuMIn", "rvest", "moexer"), require,
 
 options(na.action = "na.fail") 
 
-rus.regression <- function(x){ # Optimal Regression & Fair Price for Rus stocks
+rus.regression <- function(x){ # regression models and fair prices for stocks
   
-  D <- as.data.frame(get_candles(x, "2007-01-01", interval='daily')[,c(3,8)])
+  J <- NULL
   
-  D <- D[!duplicated(D),] # Remove duplicates
+  for (n in 1:length(x)){ # Get data of Russian stocks
+    
+    D = as.data.frame(get_candles(x[n],"2007-01-01",interval='daily')[,c(3,8)])
+    
+    D <- D[!duplicated(D),] # Remove duplicates
+    
+    D <- xts(D[,1], order.by = as.Date(D[,2])) # Move dates to row names
+    
+    D <- D[apply(D, 1, function(x) all(!is.na(x))),] # Get rid of NA
+    
+    colnames(D) <- x[n] # Put the tickers in data set
+    
+    D <- as.timeSeries(D) # Make it time series
+    
+    if (x[n] == "BELU"){ f <- which(rownames(D) == "2024-08-15")
+    
+      D[c(1:f),] <- D[c(1:f),]/8 } # Adjustments for Novabev stock
+    
+    if (is.null(J)){ J <- D } else { J <- list(J, D) } }
   
-  D <- xts(D[,1], order.by = as.Date(D[,2])) # Move dates to row names
-  
-  D <- D[apply(D, 1, function(x) all(!is.na(x))),] # Get rid of NA
-  
-  colnames(D) <- x # Put the tickers in data set
-  
-  D <- as.timeSeries(D) # Make it time series
-
-  if (x == "BELU"){ f <- which(rownames(D) == "2024-08-15")
-  
-      D[c(1:f),] <- D[c(1:f),]/8 }
-               
   y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
                  "ZR"), "=F", sep = ""), "RUB=X") # tickers 
   
@@ -38,83 +44,98 @@ rus.regression <- function(x){ # Optimal Regression & Fair Price for Rus stocks
   
   a <- as.timeSeries(p) # Make it time series and display
   
-  p <- cbind(D, a) # Join
+  reg <- NULL
+  df <- NULL
   
-  p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
-  
-  l <- NULL # Subset numeric data
-  
-  for (n in 1:ncol(p)){ if (isTRUE(is.numeric(p[,n]))){ l <- c(l, n) } }
-  
-  d <- p[,l] # Write a full regression model with all possible variables
-  
-  for (n in 2:(ncol(d))){ if (isTRUE(n == 2)){ f1 <- colnames(d)[1]
-  
-      s1 <- colnames(d)[2] # Write formulae of regression with all variables
-      
-      if (isTRUE(grepl(" ", f1))){ f1 <- sprintf("`%s`", f1) }
-      
-      if (isTRUE(grepl(" ", s1))){ s1 <- sprintf("`%s`", s1) }
-      
-      L <- sprintf("%s ~ %s", f1, s1) } else { h1 <- colnames(d)[n]
-      
-      if (isTRUE(grepl(" ", h1))){ h1 <- sprintf("`%s`", h1) }
-      
-      L <- sprintf("%s + %s", L, h1) } } # Join all variables
-      
-  D <- as.data.frame(dredge(lm(L, d))[1,]) # Run all regressions & Select best
-  
-  D <- colnames(D[,apply(D, 2, function(x) all(!is.na(x)))]) # Cut false values
-  
-  D <- D[c(2:(length(D) - 5))] # Select names of regression values
-  
-  r <- NULL # Run Optimal regression with valid variables
-  
-  for (n in 1:length(D)){ if (isTRUE(n == 1)){
+  for (i in 1:length(J)){ # Make optimal regression model for each stock
     
+    p <- cbind(J[[i]], a) # Join
+    
+    p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
+    
+    l <- NULL # Subset numeric data
+    
+    for (n in 1:ncol(p)){ if (isTRUE(is.numeric(p[,n]))){ l <- c(l, n) } }
+    
+    d <- p[,l] # Write a full regression model with all possible variables
+    
+    for (n in 2:(ncol(d))){ if (isTRUE(n == 2)){ f1 <- colnames(d)[1]
+    
+        s1 <- colnames(d)[2] # Write formulae of regression with all variables
+        
+        if (isTRUE(grepl(" ", f1))){ f1 <- sprintf("`%s`", f1) }
+        
+        if (isTRUE(grepl(" ", s1))){ s1 <- sprintf("`%s`", s1) }
+        
+        L <- sprintf("%s ~ %s", f1, s1) } else { h1 <- colnames(d)[n]
+        
+        if (isTRUE(grepl(" ", h1))){ h1 <- sprintf("`%s`", h1) }
+        
+        L <- sprintf("%s + %s", L, h1) } } # Join all variables
+        
+    D <- as.data.frame(dredge(lm(L, d))[1,]) #Run all regressions & Select best
+    
+    D <- colnames(D[,apply(D,2,function(x) all(!is.na(x)))]) # Cut false values
+    
+    D <- D[c(2:(length(D) - 5))] # Select names of regression values
+    
+    r <- NULL # Run Optimal regression with valid variables
+    
+    for (n in 1:length(D)){ if (isTRUE(n == 1)){
+      
       r <- sprintf("%s ~ %s",f1,D[1]) } else {
         
         r <- sprintf("%s + %s",r,D[n]) } }
     
-  R <- summary(lm(r, d)) # Display the most optimal regression model
+    R <- summary(lm(r, d)) # Display the most optimal regression model
+    
+    S <- as.data.frame(R$coefficients[,1]) # Regression coefficients
+    
+    r <- rownames(S)[-1] # Row names without intercept value
+    
+    g <- S[1,] # Intercept Value
+    
+    v <- as.data.frame(a[nrow(a),]) # Select last observation
+    
+    S <- as.data.frame(S[-1,]) # Reduce first column
+    
+    rownames(S) <- r # Change row names to one without first row name
+    
+    v <- t(as.data.frame(v)) # Transpose
+    
+    v <- as.data.frame(v[order(row.names(v)), ]) # Order alphabetically
+    
+    v <- v[c(rownames(S)),]
+    
+    v <- as.data.frame(v)
+    
+    rownames(v) <- rownames(S)
+    
+    l <- data.frame(S, v) # Join 
+    
+    l$var <- l[,1] * l[,2] # Sum Product of two columns
+    
+    pot_return = round(log(round(sum(l[,3]) + g, 2) / p[nrow(p), 1]), 4) * 100
+    
+    if (is.null(reg)){ reg <- list(R) } else { reg[[i]] <- R } 
+    
+    g <- cbind.data.frame(
+      round(sum(l[,3]) + g, 2),
+      p[nrow(p), 1],
+      pot_return
+      )
+    
+    colnames(g) <- c("Fair Price", "Current Price", "Change %")
+    rownames(g) <- x[i]
+    
+    df <- rbind.data.frame(df, g) # Merge rows to data frame
+  }
+  nested_list <- list(reg, df) # Add regressions and data frame to list
   
-  S <- as.data.frame(R$coefficients[,1]) # Regression coefficients
+  names(nested_list[[1]]) <- x # Assign tickers
   
-  r <- rownames(S)[-1] # Row names without intercept value
+  names(nested_list) <- c("Regression", "Data Frame") # Names
   
-  g <- S[1,] # Intercept Value
-  
-  v <- as.data.frame(a[nrow(a),]) # Select last observation
-  
-  S <- as.data.frame(S[-1,]) # Reduce first column
-  
-  rownames(S) <- r # Change row names to one without first row name
-  
-  v <- t(as.data.frame(v)) # Transpose
-  
-  v <- as.data.frame(v[order(row.names(v)), ]) # Order alphabetically
-  
-  v <- v[c(rownames(S)),]
-  
-  v <- as.data.frame(v)
-  
-  rownames(v) <- rownames(S)
-  
-  l <- data.frame(S, v) # Join 
-  
-  l$var <- l[,1] * l[,2] # Sum Product of two columns
-
-  pot_return = round(log(round(sum(l[,3]) + g, 2) / p[nrow(p), 1]), 4) * 100
-                         
-  advice <- ifelse(pot_return > 0, "Upside", "Downside") # Advice
-  
-  list(
-    R,
-    c(
-      sprintf("Fair price is %s", round(sum(l[,3]) + g, 2)),
-      sprintf("Current Price %s", p[nrow(p), 1]),
-      sprintf("Potential %s: %s %%", advice, pot_return)
-         )
-       )
+  nested_list # Display
 }
-rus.regression("BISVP")
+rus.regression(c("BISVP", "LKOH"))
