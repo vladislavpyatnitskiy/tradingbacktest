@@ -122,10 +122,16 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
     g <- cbind.data.frame(
       round(sum(l[,3]) + g, 2),
       p[nrow(p), 1],
-      pot_return
+      pot_return,
+      nrow(p),
+      R[[9]]
       )
     
-    colnames(g) <- c("Fair Price", "Current Price", "Change %")
+    colnames(g) <- c(
+      "Fair Price", "Current Price", "Change (%)", "Number of Obs.",
+      "Adjusted R^2"
+      )
+    
     rownames(g) <- x[i]
     
     df <- rbind.data.frame(df, g) # Merge rows to data frame
