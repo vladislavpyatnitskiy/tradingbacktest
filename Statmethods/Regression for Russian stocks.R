@@ -25,7 +25,7 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
     
       D[c(1:f),] <- D[c(1:f),]/8 } # Adjustments for Novabev stock
     
-    if (is.null(J)){ J <- D } else { J <- list(J, D) } }
+    if (is.null(J)){ J <- list(D) } else { J[[n]] <- D } }
   
   y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
                  "ZR"), "=F", sep = ""), "RUB=X") # tickers 
