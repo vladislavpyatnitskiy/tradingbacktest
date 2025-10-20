@@ -6,6 +6,81 @@
 Welcome to the repository! Here you can find R scripts for statistical arbitrage.
 
 Find factors that have the impact on financial instruments and find profitable opportunities.
+
+For Instruments available via Yahoo! Finance:
+```
+$Regression
+$Regression$XOM
+
+Call:
+lm(formula = r, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-43.172  -7.679   1.312   7.234  47.167 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 36.0491281  1.4078279  25.606  < 2e-16 ***
+Brent        0.5767861  0.0173964  33.156  < 2e-16 ***
+Cocoa        0.0037099  0.0001997  18.581  < 2e-16 ***
+Coffee       0.1146894  0.0074904  15.311  < 2e-16 ***
+Copper      -6.5245118  0.5541692 -11.774  < 2e-16 ***
+Cotton      -0.2776988  0.0129921 -21.374  < 2e-16 ***
+Gas         -0.2498377  0.1712093  -1.459  0.14458    
+Gold        -0.0140115  0.0010149 -13.806  < 2e-16 ***
+Hogs         0.0500330  0.0166764   3.000  0.00271 ** 
+Rice        -0.0036154  0.0012276  -2.945  0.00325 ** 
+Rouble       0.4307849  0.0154253  27.927  < 2e-16 ***
+Soybeans     0.0071155  0.0016366   4.348 1.41e-05 ***
+Sugar        0.3830150  0.0597562   6.410 1.63e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 11.64 on 3938 degrees of freedom
+Multiple R-squared:  0.5766,	Adjusted R-squared:  0.5753 
+F-statistic: 446.8 on 12 and 3938 DF,  p-value: < 2.2e-16
+
+
+$Regression$AMZN
+
+Call:
+lm(formula = r, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-91.775 -11.812  -0.309  12.193  87.046 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -1.368e+02  2.239e+00 -61.097  < 2e-16 ***
+Brent       -4.536e-01  2.766e-02 -16.396  < 2e-16 ***
+Cocoa        5.868e-04  3.175e-04   1.848  0.06466 .  
+Coffee      -2.551e-01  1.191e-02 -21.412  < 2e-16 ***
+Copper       2.168e+01  8.813e-01  24.605  < 2e-16 ***
+Cotton       3.073e-01  2.066e-02  14.873  < 2e-16 ***
+Gas          6.203e+00  2.723e-01  22.784  < 2e-16 ***
+Gold         7.140e-02  1.614e-03  44.237  < 2e-16 ***
+Hogs         1.002e-01  2.652e-02   3.779  0.00016 ***
+Rice         8.625e-03  1.952e-03   4.418 1.02e-05 ***
+Rouble       1.497e+00  2.453e-02  61.020  < 2e-16 ***
+Soybeans    -1.977e-02  2.603e-03  -7.597 3.76e-14 ***
+Sugar       -1.572e+00  9.503e-02 -16.540  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 18.52 on 3938 degrees of freedom
+Multiple R-squared:  0.9253,	Adjusted R-squared:  0.9251 
+F-statistic:  4067 on 12 and 3938 DF,  p-value: < 2.2e-16
+
+
+
+$`Data Frame`
+     Fair Price Current Price Change (%) Number of Obs. Adjusted R^2
+XOM       76.09        110.64     -37.44           3951    0.5752618
+AMZN     282.66        214.47      27.61           3951    0.9250992
+```
+For Russian Financial Instruments:
 ```
 $Regression
 $Regression$MRKV
