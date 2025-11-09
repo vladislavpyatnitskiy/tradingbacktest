@@ -115,7 +115,7 @@ stock.regression <- function(x){ # regression models and fair prices for stocks
       p[nrow(p), 1],
       pot_return,
       nrow(p),
-      R[[9]]
+      round(R[[9]], 2)
     )
     
     colnames(g) <- c(
@@ -127,6 +127,8 @@ stock.regression <- function(x){ # regression models and fair prices for stocks
     
     df <- rbind.data.frame(df, g) # Merge rows to data frame
   }
+  df <- df[order(-df$`Change (%)`), ] # Sort by price change level
+                           
   nested_list <- list(reg, df) # Add regressions and data frame to list
   
   names(nested_list[[1]]) <- x # Assign tickers
