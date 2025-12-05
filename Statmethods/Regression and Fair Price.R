@@ -17,14 +17,18 @@ stock.regression <- function(x){ # regression models and fair prices for stocks
     D <- as.timeSeries(D) # Make it time series
     
     if (is.null(J)){ J <- list(D) } else { J[[n]] <- D } }
-  
+
+  message("Stocks data has been downloaded successfully")
+                 
   y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
                  "ZR"), "=F", sep = ""), "RUB=X") # tickers 
   
   p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
   
   for (A in y){ p <- cbind(p, getSymbols(A, src="yahoo", auto.assign=F)[,4]) }
-  
+
+  message("Commodities data has been downloaded successfully")
+                 
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
   if (isTRUE(grepl("-", y))){ y <- gsub("-", "", y) }
