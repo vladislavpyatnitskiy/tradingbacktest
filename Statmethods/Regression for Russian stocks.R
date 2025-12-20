@@ -24,6 +24,13 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
     if (x[n] == "BELU"){ f <- which(rownames(D) == "2024-08-15")
     
       D[c(1:f),] <- D[c(1:f),]/8 } # Adjustments for Novabev stock
+
+    message(
+      sprintf(
+        "%s is downloaded; %s from %s", 
+        x[n], which(x == x[n]), length(x)
+        )
+      )
     
     if (is.null(J)){ J <- list(D) } else { J[[n]] <- D } }
 
@@ -34,9 +41,15 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
   
   p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
   
-  for (A in y){ p <- cbind(p, getSymbols(A, src="yahoo", auto.assign=F)[,4]) }
-
-  message("Commodities data has been downloaded successfully")
+  for (A in y){ p <- cbind(p, getSymbols(A, src="yahoo", auto.assign=F)[,4]) 
+  
+    message(
+      sprintf(
+        "%s is downloaded; %s from %s", 
+        A, which(y == A), length(y)
+      )
+    )
+  }
                  
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
