@@ -57,7 +57,7 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
   if (isTRUE(grepl("=", y))){ y <- gsub("=", "", y) }
   
   colnames(p) <- c("Brent", "Copper", "Gas", "Gold", "Sugar", "Cotton",
-                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Rouble")
+                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Dollar")
   
   a <- as.timeSeries(p) # Make it time series and display
   
