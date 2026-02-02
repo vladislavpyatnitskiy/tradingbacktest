@@ -12,45 +12,50 @@ stock.regression <- function(x){ # regression models and fair prices for stocks
     
     D <- D[apply(D, 1, function(x) all(!is.na(x))),] # Get rid of NA
     
+    if (isTRUE(grepl("-", x[n]))){ x[n] <- gsub("-", "", x[n]) }
+    if (isTRUE(grepl("=", x[n]))){ x[n] <- gsub("=", "", x[n]) }
+    if (isTRUE(grepl(".", x[n]))){ x[n] <- gsub(".", "", x[n]) }
+    
     colnames(D) <- x[n] # Put the tickers in data set
     
     D <- as.timeSeries(D) # Make it time series
-
+    
     message(
       sprintf(
         "%s is downloaded; %s from %s", 
         x[n], which(x == x[n]), length(x)
       )
     )
-                 
+    
     if (is.null(J)){ J <- list(D) } else { J[[n]] <- D } }
-
+  
   message("Stocks data has been downloaded successfully")
-                 
+  
   y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
-                 "ZR"), "=F", sep = ""), "RUB=X") # tickers 
+                 "ZR"), "=F", sep = ""), "DX-Y.NYB") # tickers 
   
   p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
   
   for (A in y){ p <- cbind(p, getSymbols(A, src="yahoo", auto.assign=F)[,4]) 
-              
+  
     message(
       sprintf(
         "%s is downloaded; %s from %s", 
         A, which(y == A), length(y)
       )
-    )            
-  }
-
+    )
+    }
+    
   message("Commodities data has been downloaded successfully")
-                 
+  
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
   if (isTRUE(grepl("-", y))){ y <- gsub("-", "", y) }
   if (isTRUE(grepl("=", y))){ y <- gsub("=", "", y) }
+  if (isTRUE(grepl(".", y))){ y <- gsub(".", "", y) }
   
   colnames(p) <- c("Brent", "Copper", "Gas", "Gold", "Sugar", "Cotton",
-                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Rouble")
+                   "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Dollar")
   
   a <- as.timeSeries(p) # Make it time series and display
   
@@ -147,7 +152,7 @@ stock.regression <- function(x){ # regression models and fair prices for stocks
     df <- rbind.data.frame(df, g) # Merge rows to data frame
   }
   df <- df[order(-df$`Change (%)`), ] # Sort by price change level
-                           
+  
   nested_list <- list(reg, df) # Add regressions and data frame to list
   
   names(nested_list[[1]]) <- x # Assign tickers
