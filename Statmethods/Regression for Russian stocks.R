@@ -23,8 +23,8 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
     
     if (x[n] == "BELU"){ f <- which(rownames(D) == "2024-08-15")
     
-      D[c(1:f),] <- D[c(1:f),]/8 } # Adjustments for Novabev stock
-
+    D[c(1:f),] <- D[c(1:f),]/8 } # Adjustments for Novabev stock
+    
     message(
       sprintf(
         "%s is downloaded; %s from %s", 
@@ -33,10 +33,10 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
       )
     
     if (is.null(J)){ J <- list(D) } else { J[[n]] <- D } }
-
+  
   message("Stocks data has been downloaded successfully")
-                 
-  y <- c(paste(c("BZ", "HG", "NG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
+  
+  y <- c(paste(c("BZ", "HG", "GC", "SB", "CT", "KC", "CC", "HE", "ZS",
                  "ZR"), "=F", sep = ""), "RUB=X") # tickers 
   
   p <- NULL # 4 scenarios: no dates, only start or end dates, both dates
@@ -50,13 +50,15 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
       )
     )
   }
-                 
+  
+  message("Commodities data has been downloaded successfully")
+  
   p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
   if (isTRUE(grepl("-", y))){ y <- gsub("-", "", y) }
   if (isTRUE(grepl("=", y))){ y <- gsub("=", "", y) }
   
-  colnames(p) <- c("Brent", "Copper", "Gas", "Gold", "Sugar", "Cotton",
+  colnames(p) <- c("Brent", "Copper", "Gold", "Sugar", "Cotton",
                    "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Dollar")
   
   a <- as.timeSeries(p) # Make it time series and display
@@ -74,22 +76,22 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
     
     for (n in 1:ncol(p)){ if (isTRUE(is.numeric(p[,n]))){ l <- c(l, n) } }
     
-    d <- p[,l] # Write a full regression model with all possible variables
-    
-    for (n in 2:(ncol(d))){ if (isTRUE(n == 2)){ f1 <- colnames(d)[1]
-    
-        s1 <- colnames(d)[2] # Write formulae of regression with all variables
+        d <- p[,l] # Write a full regression model with all possible variables
         
-        if (isTRUE(grepl(" ", f1))){ f1 <- sprintf("`%s`", f1) }
+        for (n in 2:(ncol(d))){ if (isTRUE(n == 2)){ f1 <- colnames(d)[1]
         
-        if (isTRUE(grepl(" ", s1))){ s1 <- sprintf("`%s`", s1) }
-        
-        L <- sprintf("%s ~ %s", f1, s1) } else { h1 <- colnames(d)[n]
-        
-        if (isTRUE(grepl(" ", h1))){ h1 <- sprintf("`%s`", h1) }
-        
-        L <- sprintf("%s + %s", L, h1) } } # Join all variables
-        
+            s1 <- colnames(d)[2] # formulae of regression with all variables
+            
+            if (isTRUE(grepl(" ", f1))){ f1 <- sprintf("`%s`", f1) }
+            
+            if (isTRUE(grepl(" ", s1))){ s1 <- sprintf("`%s`", s1) }
+            
+            L <- sprintf("%s ~ %s", f1, s1) } else { h1 <- colnames(d)[n]
+            
+            if (isTRUE(grepl(" ", h1))){ h1 <- sprintf("`%s`", h1) }
+            
+            L <- sprintf("%s + %s", L, h1) } } # Join all variables
+            
     D <- as.data.frame(dredge(lm(L, d))[1,]) #Run all regressions & Select best
     
     D <- colnames(D[,apply(D,2,function(x) all(!is.na(x)))]) # Cut false values
@@ -142,24 +144,25 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
       pot_return,
       nrow(p),
       round(R[[9]], 2)
-      )
+    )
     
     colnames(g) <- c(
       "Fair Price", "Current Price", "Change (%)", "Number of Obs.",
       "Adjusted R^2"
-      )
+    )
     
     rownames(g) <- x[i]
     
     df <- rbind.data.frame(df, g) # Merge rows to data frame
   }
-  df <- df[order(-df$`Change (%)`), ] # Sort by price change level                           
-                           
-  nested_list <- list(reg, df) # Add regressions and data frame to list
+  df <- df[order(-df$`Change (%)`), ] # Sort by price change level
+  
+  # Add regressions, data frame and date to list
+  nested_list <- list(reg, df, rownames(a)[nrow(a)]) 
   
   names(nested_list[[1]]) <- x # Assign tickers
   
-  names(nested_list) <- c("Regression", "Data Frame") # Names
+  names(nested_list) <- c("Regression", "Data Frame", "Date") # Names
   
   nested_list # Display
 }
