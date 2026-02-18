@@ -1,4 +1,4 @@
-lapply(c("quantmod", "timeSeries", "MuMIn", "rvest", "moexer"), require,
+lapply(c("quantmod", "timeSeries", "MuMIn", "moexer", "rvest"), require,
        character.only = T) # lib
 
 options(na.action = "na.fail") 
@@ -53,8 +53,6 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
   
   message("Commodities data has been downloaded successfully")
   
-  p <- p[apply(p, 1, function(x) all(!is.na(x))),] # Get rid of NA
-  
   if (isTRUE(grepl("-", y))){ y <- gsub("-", "", y) }
   if (isTRUE(grepl("=", y))){ y <- gsub("=", "", y) }
   
@@ -62,6 +60,52 @@ rus.regression <- function(x){ # regression models and fair prices for stocks
                    "Coffee", "Cocoa", "Hogs", "Soybeans", "Rice", "Dollar")
   
   a <- as.timeSeries(p) # Make it time series and display
+  
+  cir <- function(s, e){
+    
+    if (as.Date(s, format = "%d.%m.%Y") < "2013-09-17") s = "17.09.2013"
+    
+    L <- sprintf(
+      paste(
+        "https://www.cbr.ru/eng/hd_base/KeyRate/",
+        "?UniDbQuery.Posted=",
+        "True&UniDbQuery.From=%s&UniDbQuery.To=%s",
+        sep = ""),
+      s, e)
+    
+    B <- read_html(L) %>% html_nodes('table') %>% html_nodes('tr') %>%
+      html_nodes('td') %>% html_text() 
+    
+    v <- data.frame(
+      B[seq(from = 1, to = length(B), by = 2)],
+      B[seq(from = 2, to = length(B), by = 2)]
+    )
+    
+    colnames(v) <- c("Date", "Interest Rate")
+    
+    v$Date <- as.Date(v$Date, format = "%d.%m.%Y")
+    
+    v <- v[order(v$Date, decreasing = F), ]
+    
+    dates <- v[,1]
+    
+    v <- as.data.frame(v[,-1])
+    
+    rownames(v) <- dates
+    colnames(v) <- "Rate"
+    
+    for (n in 1:ncol(v)){ v[,n] <- as.numeric(v[,n]) }
+    
+    as.timeSeries(v)
+  }
+  
+  cbr = cir("17.09.2013", as.Date(Sys.Date())) # Interest Rate Data
+  
+  message("Interest Rate data has been downloaded successfully")
+  
+  a <- as.timeSeries(cbind(a, cbr)) # Make it time series and display
+  
+  a <- a[apply(a, 1, function(x) all(!is.na(x))),] # Get rid of NA
   
   reg <- NULL
   df <- NULL
