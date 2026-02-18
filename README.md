@@ -83,70 +83,74 @@ AMZN     282.66        214.47      27.61           3951    0.9250992
 For Russian Financial Instruments:
 ```
 $Regression
-$Regression$MRKV
-
-Call:
-lm(formula = r, data = d)
-
-Residuals:
-      Min        1Q    Median        3Q       Max 
--0.043560 -0.013364 -0.000031  0.010644  0.051519 
-
-Coefficients:
-              Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  9.712e-02  2.658e-03  36.541  < 2e-16 ***
-Brent        6.699e-04  4.000e-05  16.748  < 2e-16 ***
-Cocoa       -4.573e-06  3.886e-07 -11.768  < 2e-16 ***
-Coffee      -2.961e-04  1.454e-05 -20.360  < 2e-16 ***
-Copper       1.701e-02  1.355e-03  12.554  < 2e-16 ***
-Cotton       5.373e-04  4.314e-05  12.452  < 2e-16 ***
-Gas         -2.533e-03  5.056e-04  -5.009 5.88e-07 ***
-Gold         5.204e-05  1.963e-06  26.512  < 2e-16 ***
-Hogs        -2.444e-04  3.734e-05  -6.545 7.23e-11 ***
-Rice        -2.873e-05  2.429e-06 -11.827  < 2e-16 ***
-Soybeans    -1.104e-04  4.378e-06 -25.212  < 2e-16 ***
-Sugar       -7.840e-04  1.524e-04  -5.145 2.90e-07 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 0.01811 on 2386 degrees of freedom
-Multiple R-squared:  0.6416,	Adjusted R-squared:  0.6399 
-F-statistic: 388.3 on 11 and 2386 DF,  p-value: < 2.2e-16
-
-
-$Regression$BELU
+$Regression$NVTK
 
 Call:
 lm(formula = r, data = d)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--279.56  -35.58    0.01   34.54  466.16 
+-560.25 -116.72  -15.16   95.95 1379.85 
 
 Coefficients:
               Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -9.531e+02  1.742e+01 -54.718  < 2e-16 ***
-Brent        4.411e-01  1.613e-01   2.735  0.00631 ** 
-Cocoa        7.357e-03  1.626e-03   4.525 6.47e-06 ***
-Coffee      -2.854e-01  4.898e-02  -5.826 6.77e-09 ***
-Copper       8.904e+01  5.325e+00  16.722  < 2e-16 ***
-Gas         -5.046e+00  1.770e+00  -2.851  0.00441 ** 
-Hogs         9.696e-01  1.598e-01   6.066 1.62e-09 ***
-Rice         2.190e-01  1.061e-02  20.637  < 2e-16 ***
-Rouble       5.296e+00  2.527e-01  20.955  < 2e-16 ***
-Soybeans    -1.449e-01  1.743e-02  -8.317  < 2e-16 ***
-Sugar        2.092e+01  8.354e-01  25.046  < 2e-16 ***
+(Intercept) -608.21252   28.98365 -20.985  < 2e-16 ***
+Brent          3.51860    0.39373   8.937  < 2e-16 ***
+Cocoa         -0.04668    0.00388 -12.031  < 2e-16 ***
+Coffee         0.31171    0.10879   2.865  0.00420 ** 
+Copper       188.75052    9.46032  19.952  < 2e-16 ***
+Cotton         3.62806    0.37629   9.642  < 2e-16 ***
+Dollar        21.90706    0.46868  46.742  < 2e-16 ***
+Hogs           1.02384    0.34529   2.965  0.00305 ** 
+Rate         -45.71042    1.60355 -28.506  < 2e-16 ***
+Rice          -0.07711    0.02348  -3.284  0.00104 ** 
+Soybeans      -0.56434    0.04077 -13.842  < 2e-16 ***
+Sugar          9.73869    1.50812   6.457 1.27e-10 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 61.54 on 1682 degrees of freedom
-Multiple R-squared:  0.9268,	Adjusted R-squared:  0.9263 
-F-statistic:  2128 on 10 and 1682 DF,  p-value: < 2.2e-16
+Residual standard error: 177.7 on 2597 degrees of freedom
+Multiple R-squared:  0.7815,	Adjusted R-squared:  0.7806 
+F-statistic: 844.6 on 11 and 2597 DF,  p-value: < 2.2e-16
+
+
+$Regression$GAZP
+
+Call:
+lm(formula = r, data = d)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-79.480 -26.103  -4.083  17.237 120.493 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 44.669778   6.249800   7.147 1.16e-12 ***
+Brent       -0.370199   0.076618  -4.832 1.44e-06 ***
+Cocoa       -0.003890   0.000817  -4.762 2.03e-06 ***
+Coffee       0.316405   0.027482  11.513  < 2e-16 ***
+Copper      21.295343   2.594211   8.209 3.57e-16 ***
+Cotton       1.486323   0.085422  17.400  < 2e-16 ***
+Dollar       1.439619   0.111153  12.952  < 2e-16 ***
+Gold        -0.033564   0.003174 -10.576  < 2e-16 ***
+Hogs         0.335789   0.074527   4.506 6.93e-06 ***
+Rate        -7.308891   0.324913 -22.495  < 2e-16 ***
+Soybeans    -0.039670   0.007829  -5.067 4.35e-07 ***
+Sugar       -1.297698   0.316516  -4.100 4.27e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 36.25 on 2445 degrees of freedom
+Multiple R-squared:  0.551,	Adjusted R-squared:  0.549 
+F-statistic: 272.8 on 11 and 2445 DF,  p-value: < 2.2e-16
 
 
 
 $`Data Frame`
      Fair Price Current Price Change (%) Number of Obs. Adjusted R^2
-MRKV       0.13        0.1229       5.62           2398    0.6399308
-BELU     421.16      379.4000      10.44           1693    0.9263181
+NVTK    1325.42       1162.90      13.08           2609         0.78
+GAZP     109.31        126.18     -14.35           2457         0.55
+
+$Date
+[1] "2026-02-17"
 ```
