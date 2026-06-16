@@ -220,7 +220,7 @@ rus.regression <- function(x, dataframe=F){
           "BZ", "HG", "GC", "SB", "CT", "KC", "CC", "LE", "ZS","ZR"
           ), "=F", sep = "")]
     
-    v["ZR=F"] = v["ZR=F"] * 100
+    v["ZR=F"] = v["ZR=F"] / 100
     
     v <- c(v, as.numeric(rouble_df), as.numeric(cbr[nrow(cbr),]))
     
